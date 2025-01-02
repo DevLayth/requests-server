@@ -1,8 +1,10 @@
 const express = require("express");
 const axios = require("axios");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000; 
+const HOST = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 
 const PHP_ENDPOINT = "https://utilities.uod.ac/utilities/t_control/forRequestsServer.php";
 const ANOTHER_ENDPOINT = "https://utilities.uod.ac/utilities/API/taxi_request/requests.php";
@@ -19,6 +21,9 @@ const POST_HEADERS = {
 
 let dataArray = [];
 let intervalId = null;
+
+// Enable CORS
+app.use(cors());
 
 // Fetch data from PHP endpoint
 app.get("/fetch-data", async (req, res) => {
@@ -85,7 +90,7 @@ const sendDataToAnotherEndpoint = async (phone) => {
 // Periodic data fetching logic
 const fetchDataPeriodically = async () => {
     try {
-        const response = await axios.get(`http://localhost:${server.address().port}/fetch-data`);
+        const response = await axios.get(`${HOST}/fetch-data`);
         console.log("Data fetched periodically:", response.data);
 
         if (Array.isArray(response.data)) {
@@ -106,5 +111,5 @@ const fetchDataPeriodically = async () => {
 
 // Start the server
 const server = app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${server.address().port}`);
+    console.log(`Server is running on ${HOST}`);
 });
