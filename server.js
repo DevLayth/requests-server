@@ -6,8 +6,8 @@ const app = express();
 const PORT = process.env.PORT || 3000; 
 const HOST = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 
-const PHP_ENDPOINT = "https://utilities.uod.ac/utilities/t_control/forRequestsServer.php";
-const ANOTHER_ENDPOINT = "https://utilities.uod.ac/utilities/API/taxi_request/requests.php";
+const PHP_ENDPOINT = "http://utilities.uod.ac/utilities/t_control/forRequestsServer.php";
+const ANOTHER_ENDPOINT = "http://utilities.uod.ac/utilities/API/taxi_request/requests.php";
 
 const HEADERS = {
     "Content-Type": "application/json",
