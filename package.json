@@ -2,7 +2,7 @@
   "name": "requests-server",
   "version": "1.0.0",
   "description": "A server for handling requests in the T-UoD project",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "mocha"
   },
