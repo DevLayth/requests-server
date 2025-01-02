@@ -1,8 +1,8 @@
-import express from "express";
-import axios from "axios";
+const express = require("express");
+const axios = require("axios");
 
 const app = express();
-const PORT = process.env.PORT || 0; 
+const PORT = process.env.PORT || 0; // Use environment variable or select dynamically
 
 const PHP_ENDPOINT = "https://utilities.uod.ac/utilities/t_control/forRequestsServer.php";
 const ANOTHER_ENDPOINT = "https://utilities.uod.ac/utilities/API/taxi_request/requests.php";
@@ -20,6 +20,7 @@ const POST_HEADERS = {
 let dataArray = [];
 let intervalId = null;
 
+// Fetch data from PHP endpoint
 app.get("/fetch-data", async (req, res) => {
     try {
         const response = await axios.get(PHP_ENDPOINT, { headers: HEADERS });
@@ -44,6 +45,7 @@ app.get("/fetch-data", async (req, res) => {
     }
 });
 
+// Start periodic fetching
 app.get("/start-fetching", (req, res) => {
     if (!intervalId) {
         intervalId = setInterval(fetchDataPeriodically, 2000);
@@ -54,6 +56,7 @@ app.get("/start-fetching", (req, res) => {
     }
 });
 
+// Stop periodic fetching
 app.get("/stop-fetching", (req, res) => {
     if (intervalId) {
         clearInterval(intervalId);
@@ -65,6 +68,7 @@ app.get("/stop-fetching", (req, res) => {
     }
 });
 
+// Send data to another endpoint
 const sendDataToAnotherEndpoint = async (phone) => {
     try {
         const response = await axios.post(
@@ -78,6 +82,7 @@ const sendDataToAnotherEndpoint = async (phone) => {
     }
 };
 
+// Periodic data fetching logic
 const fetchDataPeriodically = async () => {
     try {
         const response = await axios.get(`http://localhost:${server.address().port}/fetch-data`);
@@ -99,6 +104,7 @@ const fetchDataPeriodically = async () => {
     }
 };
 
+// Start the server
 const server = app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${server.address().port}`);
 });
