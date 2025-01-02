@@ -21,10 +21,8 @@ const POST_HEADERS = {
 let dataArray = [];
 let intervalId = null;
 
-// Enable CORS
 app.use(cors());
 
-// Fetch data from PHP endpoint
 app.get("/fetch-data", async (req, res) => {
     try {
         const response = await fetch(PHP_ENDPOINT, { headers: HEADERS });
@@ -50,19 +48,18 @@ app.get("/fetch-data", async (req, res) => {
     }
 });
 
-// Start periodic fetching
-app.get("/start-fetching", (req, res) => {
+app.get("/start", (req, res) => {
     if (!intervalId) {
         intervalId = setInterval(fetchDataPeriodically, 2000);
         res.status(200).json({ message: "Periodic fetching started..." });
         console.log("Periodic fetching started.");
     } else {
         res.status(400).json({ message: "Periodic fetching is already running..." });
+        console.log("Periodic fetching is already running...");
     }
 });
 
-// Stop periodic fetching
-app.get("/stop-fetching", (req, res) => {
+app.get("/stop", (req, res) => {
     if (intervalId) {
         clearInterval(intervalId);
         intervalId = null;
@@ -70,10 +67,10 @@ app.get("/stop-fetching", (req, res) => {
         console.log("Periodic fetching stopped.");
     } else {
         res.status(400).json({ message: "Periodic fetching is not running." });
+        console.log("Periodic fetching is not running.");
     }
 });
 
-// Send data to another endpoint
 const sendDataToAnotherEndpoint = async (phone) => {
     try {
         const response = await fetch(ANOTHER_ENDPOINT, {
@@ -88,7 +85,6 @@ const sendDataToAnotherEndpoint = async (phone) => {
     }
 };
 
-// Periodic data fetching logic
 const fetchDataPeriodically = async () => {
     try {
         const response = await fetch(`${HOST}/fetch-data`);
@@ -111,7 +107,6 @@ const fetchDataPeriodically = async () => {
     }
 };
 
-// Start the server
 const server = app.listen(PORT, () => {
     console.log(`Server is running on ${HOST}`);
 });
