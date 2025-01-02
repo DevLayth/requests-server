@@ -6,17 +6,23 @@ const app = express();
 const PORT = process.env.PORT || 3000; 
 const HOST = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 
-const PHP_ENDPOINT = "http://utilities.uod.ac/utilities/t_control/forRequestsServer.php";
+const PHP_ENDPOINT = "https://utilities.uod.ac/utilities/t_control/forRequestsServer.php";
 const ANOTHER_ENDPOINT = "https://utilities.uod.ac/utilities/API/taxi_request/requests.php";
 
 const HEADERS = {
     "Content-Type": "application/json",
     "X-API-KEY": "ControlLMmUoD20Sh2300lSH",
+     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Referer': 'https://uod.ac',
+    'Origin': 'https://uod.ac'
 };
 
 const POST_HEADERS = {
     "Content-Type": "application/json",
     "X-API-KEY": "LMmUoD20Sh2300lSH",
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Referer': 'https://uod.ac',
+    'Origin': 'https://uod.ac'
 };
 
 let dataArray = [];
