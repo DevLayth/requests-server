@@ -7,6 +7,7 @@ const PORT = 3000;
 const PHP_ENDPOINT = "https://utilities.uod.ac/utilities/t_control/forRequestsServer.php";
 
 let dataArray = [];
+let intervalId = null;
 
 app.get("/fetch-data", async (req, res) => {
     try {
@@ -25,10 +26,28 @@ app.get("/fetch-data", async (req, res) => {
     }
 });
 
+app.get("/start-fetching", (req, res) => {
+    if (!intervalId) {
+        intervalId = setInterval(fetchDataPeriodically, 2000);
+        res.status(200).json({ message: "Periodic fetching started." });
+    } else {
+        res.status(400).json({ message: "Periodic fetching is already running." });
+    }
+});
+
+app.get("/stop-fetching", (req, res) => {
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+        res.status(200).json({ message: "Periodic fetching stopped." });
+    } else {
+        res.status(400).json({ message: "Periodic fetching is not running." });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-
 
 const sendDataToAnotherEndpoint = async (phone) => {
     try {
@@ -46,7 +65,6 @@ const sendDataToAnotherEndpoint = async (phone) => {
     }
 };
 
-
 const fetchDataPeriodically = async () => {
     try {
         const response = await axios.get(`http://localhost:${PORT}/fetch-data`);
@@ -58,5 +76,3 @@ const fetchDataPeriodically = async () => {
         console.error("Error during periodic fetch:", error.message);
     }
 };
-
-setInterval(fetchDataPeriodically, 2000);
