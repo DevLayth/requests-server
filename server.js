@@ -1,5 +1,4 @@
 const express = require("express");
-const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
@@ -12,17 +11,11 @@ const ANOTHER_ENDPOINT = "https://utilities.uod.ac/utilities/API/taxi_request/re
 const HEADERS = {
     "Content-Type": "application/json",
     "X-API-KEY": "ControlLMmUoD20Sh2300lSH",
-     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Referer': 'https://uod.ac',
-    'Origin': 'https://uod.ac'
 };
 
 const POST_HEADERS = {
     "Content-Type": "application/json",
     "X-API-KEY": "LMmUoD20Sh2300lSH",
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Referer': 'https://uod.ac',
-    'Origin': 'https://uod.ac'
 };
 
 let dataArray = [];
@@ -34,24 +27,25 @@ app.use(cors());
 // Fetch data from PHP endpoint
 app.get("/fetch-data", async (req, res) => {
     try {
-        const response = await axios.get(PHP_ENDPOINT, { headers: HEADERS });
+        const response = await fetch(PHP_ENDPOINT, { headers: HEADERS });
+        const data = await response.json();
 
-        if (Array.isArray(response.data)) {
-            dataArray.push(...response.data);
-            console.log("Fetched data:", response.data);
-            res.status(200).json(response.data);
+        if (Array.isArray(data)) {
+            dataArray.push(...data);
+            console.log("Fetched data:", data);
+            res.status(200).json(data);
         } else {
-            console.error("Unexpected data format from PHP endpoint:", response.data);
+            console.error("Unexpected data format from PHP endpoint:", data);
             res.status(500).json({
                 message: "Unexpected data format from PHP endpoint.",
-                data: response.data,
+                data: data,
             });
         }
     } catch (error) {
-        console.error("Error fetching data:", error.response?.data || error.message);
+        console.error("Error fetching data:", error.message);
         res.status(500).json({
             message: "Failed to fetch data from the PHP endpoint.",
-            error: error.response?.data || error.message,
+            error: error.message,
         });
     }
 });
@@ -82,25 +76,27 @@ app.get("/stop-fetching", (req, res) => {
 // Send data to another endpoint
 const sendDataToAnotherEndpoint = async (phone) => {
     try {
-        const response = await axios.post(
-            ANOTHER_ENDPOINT,
-            { phone: phone },
-            { headers: POST_HEADERS }
-        );
-        console.log("Data sent to another endpoint:", response.data);
+        const response = await fetch(ANOTHER_ENDPOINT, {
+            method: "POST",
+            headers: POST_HEADERS,
+            body: JSON.stringify({ phone: phone }),
+        });
+        const data = await response.json();
+        console.log("Data sent to another endpoint:", data);
     } catch (error) {
-        console.error("Error sending data to another endpoint:", error.response?.data || error.message);
+        console.error("Error sending data to another endpoint:", error.message);
     }
 };
 
 // Periodic data fetching logic
 const fetchDataPeriodically = async () => {
     try {
-        const response = await axios.get(`${HOST}/fetch-data`);
-        console.log("Data fetched periodically:", response.data);
+        const response = await fetch(`${HOST}/fetch-data`);
+        const data = await response.json();
+        console.log("Data fetched periodically:", data);
 
-        if (Array.isArray(response.data)) {
-            response.data.forEach((item) => {
+        if (Array.isArray(data)) {
+            data.forEach((item) => {
                 if (item.phone) {
                     sendDataToAnotherEndpoint(item.phone);
                 } else {
@@ -108,10 +104,10 @@ const fetchDataPeriodically = async () => {
                 }
             });
         } else {
-            console.error("Unexpected response format during periodic fetch:", response.data);
+            console.error("Unexpected response format during periodic fetch:", data);
         }
     } catch (error) {
-        console.error("Error during periodic fetch:", error.response?.data || error.message);
+        console.error("Error during periodic fetch:", error.message);
     }
 };
 
