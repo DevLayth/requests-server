@@ -54,10 +54,10 @@ app.get("/fetch-data", async (req, res) => {
 app.get("/start-fetching", (req, res) => {
     if (!intervalId) {
         intervalId = setInterval(fetchDataPeriodically, 2000);
-        res.status(200).json({ message: "Periodic fetching started." });
+        res.status(200).json({ message: "Periodic fetching started..." });
         console.log("Periodic fetching started.");
     } else {
-        res.status(400).json({ message: "Periodic fetching is already running." });
+        res.status(400).json({ message: "Periodic fetching is already running..." });
     }
 });
 
